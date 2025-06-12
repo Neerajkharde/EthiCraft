@@ -1,18 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import Home from './components/Home';
 import Register from './components/Register';
 import LoginForm from './login/LoginForm';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
-import Admin from './login/Admin'; // Don't forget this!
+import Admin from './login/Admin';
+import StudentDashboard from './components/StudentDashboard';
 
-// 🔐 AdminRoute component
-const AdminRoute = ({ children }) => {
+// 🔐 Reusable ProtectedRoute component
+const ProtectedRoute = ({ children, role: expectedRole, redirectTo }) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const role = localStorage.getItem('role');
-  return isLoggedIn && role === 'ADMIN' ? children : <Navigate to="/admin" />;
+  const userRole = localStorage.getItem('role');
+
+  return isLoggedIn && userRole === expectedRole
+    ? children
+    : <Navigate to={redirectTo} />;
 };
 
 const App = () => {
@@ -26,12 +31,24 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/admin" element={<Admin />} />
+
+            {/* 🔐 Admin Protected Route */}
             <Route
               path="/admin-dashboard"
               element={
-                <AdminRoute>
+                <ProtectedRoute role="ADMIN" redirectTo="/admin">
                   <AdminDashboard />
-                </AdminRoute>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 🔐 Student Protected Route */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute role="STUDENT" redirectTo="/login">
+                  <StudentDashboard />
+                </ProtectedRoute>
               }
             />
           </Routes>

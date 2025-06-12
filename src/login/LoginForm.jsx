@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FiUser, FiLock } from 'react-icons/fi';
 
 export default function LoginForm() {
   const [username, setUsername] = useState('');
@@ -9,92 +12,112 @@ export default function LoginForm() {
   const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const response = await axios.post('http://localhost:8080/student/login', { username, password }, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await axios.post(
+      'http://localhost:8080/student/login',
+      { username, password },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
-    const { role } = response.data;
+    const { role, username:loggedInUsername } = response.data;
+
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('role', role);
+    localStorage.setItem('username', loggedInUsername);
 
-    if (role === 'ADMIN') {
-      window.location.href = '/admin-dashboard';
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = role === 'ADMIN' ? '/admin-dashboard' : '/dashboard';
   } catch (err) {
     setError('Invalid username or password. Please try again.');
   }
 };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Left - Login Form */}
-        <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-bold mb-6 text-black">Login</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-purple-100 px-6 py-12">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 bg-white bg-opacity-40 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-white/30">
+        
+        {/* Left Side - Form */}
+        <div className="p-10 flex flex-col justify-center">
+          <h1 className="text-4xl font-extrabold text-blue-900 mb-4">Student Login</h1>
+          <p className="text-gray-600 text-sm mb-6">Please enter your PRN and password.</p>
 
           {error && (
-            <div className="mb-4 text-red-600 text-sm font-semibold">
+            <div className="mb-4 text-red-600 text-sm font-semibold bg-red-50 p-2 rounded shadow-sm">
               {error}
             </div>
           )}
 
-          <form className="space-y-5" onSubmit={handleLogin}>
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-1 text-gray-700">
-                USERNAME
-              </label>
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Username Field */}
+            <div className="relative">
+              <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
-                type="text"
                 id="username"
+                type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                placeholder="Enter Username"
+                className="w-full pl-10 pt-5 pb-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
                 required
               />
+              <label
+                htmlFor="username"
+                className="absolute left-10 top-2 text-sm text-gray-500 peer-focus:text-blue-600 peer-focus:text-xs peer-focus:top-1 transition-all"
+              >
+                Mobile Number
+              </label>
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1 text-gray-700">
-                PASSWORD
-              </label>
+            {/* Password Field */}
+            <div className="relative">
+              <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
-                type="password"
                 id="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                placeholder="********"
+                className="w-full pl-10 pt-5 pb-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
                 required
               />
+              <label
+                htmlFor="password"
+                className="absolute left-10 top-2 text-sm text-gray-500 peer-focus:text-blue-600 peer-focus:text-xs peer-focus:top-1 transition-all"
+              >
+                Password
+              </label>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-orange-400 text-white py-2 rounded-md hover:bg-orange-500 transition-colors"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-700 transition"
             >
-              LOGIN
+              Login
             </button>
 
-            <div className="text-sm mt-2">
-              <a href="#" className="text-blue-600 hover:underline">
+            {/* Forgot Password */}
+            <div className="text-center text-sm">
+              <button
+                type="button"
+                onClick={() =>
+                  toast.info("Hey, couldn't you remember your PRN Number? 😅")
+                }
+                className="text-blue-500 hover:underline"
+              >
                 Forgot Password?
-              </a>
+              </button>
             </div>
           </form>
         </div>
 
-        {/* Right - Illustration */}
-        <div className="hidden md:flex items-center justify-center">
+        {/* Right Side - Logo */}
+        <div className="hidden md:flex items-center justify-center bg-gradient-to-bl from-blue-200 to-blue-300">
           <img
             src="/EthiCraft.png"
-            alt="Login illustration"
-            className="w-full max-w-md"
+            alt="EthiCraft Logo"
+            className="w-60 h-60 object-contain drop-shadow-xl"
           />
         </div>
       </div>
+
+      <ToastContainer position="top-center" autoClose={3000} theme="colored" transition={Zoom} />
     </div>
   );
 }
