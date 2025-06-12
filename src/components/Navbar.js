@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-yellow-400 shadow-lg">
-      <div className="max-w-6xl mx-auto py-2 px- flex justify-between items-center">
+      <div className="max-w-6xl mx-auto py-2 px-4 flex justify-between items-center">
         {/* Logo / Brand */}
         <div className="text-3xl font-extrabold tracking-wide text-blue-900 drop-shadow-md">
           <span className="text-blue-800">Ethi</span>
@@ -21,16 +21,11 @@ const Navbar = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex space-x-6 text-md md:text-lg">
-          <Link to="/" className={linkClasses('/')}>
-            Home
-          </Link>
-          <Link to="/register" className={linkClasses('/register')}>
-            Register
-          </Link>
-          <Link to="/admin" className={linkClasses('/admin')}>
-            Admin
-          </Link>
+        <div className="flex space-x-4 text-sm md:text-lg">
+          <Link to="/" className={linkClasses('/')}>Home</Link>
+          <Link to="/register" className={linkClasses('/register')}>Register</Link>
+          <Link to="/login" className={linkClasses('/login')}>Login</Link>
+          <Link to="/admin" className={linkClasses('/admin')}>Admin</Link> {/* Always visible */}
         </div>
       </div>
     </nav>
